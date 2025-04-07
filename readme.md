@@ -22,6 +22,8 @@ of `false`.
 To add word lists, use the query parameter `w` with the url as the value.
 This parameter can be used multiple times.
 
+The word lists must be plain text with one word per line.
+
 ## Build
 
 This project uses [shadow-cljs](https://github.com/thheller/shadow-cljs) to
