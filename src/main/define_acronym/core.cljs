@@ -2,14 +2,12 @@
   (:require [clojure.string :as s]
             [clojure.core.reducers :as r]))
 
-(def adjectives (atom {}))
-(def nouns (atom {}))
 (def dictionary (atom {}))
 
-(def loaded-adjectives (atom false))
-(def loaded-nouns (atom false))
+(def word-list-urls (atom ["adjectives.txt" "nouns.txt"]))
+(def word-lists-loaded (atom 0))
 
-(def acronym (atom ""))
+(def acronym (atom nil))
 
 (def acronym-el (.querySelector js/document "#acronym"))
 (def meaning-el (.querySelector js/document "#meaning"))
@@ -52,48 +50,53 @@
     (aset meaning-el "textContent" meaning-str)))
 
 (defn process-dictionary
-  "Check if both word lists have been loaded and if so, call display-meaning and
+  "Check if all word lists have been loaded and if so, call display-meaning and
   then hook up the re-roll button to call-meaning."
   []
-  (when (and @loaded-adjectives @loaded-nouns)
+  (when (= @word-lists-loaded (count @word-list-urls))
     (do (.log js/console "The dictionary is loaded.")
         (display-meaning)
         (.addEventListener roll-button-el "click" display-meaning))))
 
 (defn process-word-list
-  "Extract words, add them to the dictionaries, mark the word list as loaded,
+  "Extract words, add them to the dictionary, mark the word list as loaded,
   and call process-dictionary."
-  [list-dict list-loaded text]
+  [text]
   (let [words (map s/capitalize (s/split-lines text))]
-    ;; I added separate dictionaries because I might want to extend this in the
-    ;; future with options to use different combinations of dictionaries.
-    ;; This would especially be useful if I add custom dictionaries.
-    ;; (swap! list-dict #(r/reduce add-to-dictionary % words))
     (swap! dictionary #(r/reduce add-to-dictionary % words))
-    (swap! list-loaded #(identity true))
+    (swap! word-lists-loaded inc)
     (process-dictionary)))
-
-(defn process-adjectives
-  "Process the adjectives word list."
-  [text]
-  (process-word-list adjectives loaded-adjectives text))
-
-(defn process-nouns
-  "Process the nouns word list."
-  [text]
-  (process-word-list nouns loaded-nouns text))
 
 (defn with-text
   "Get the body of an http response as text and pass it to a callback."
   [response callback]
   (.then (.text response) callback))
 
+(defn fetch-word-list [url]
+  (fetch url #(with-text % process-word-list)))
+
+(defn query-param
+  "Get a query parameter from the current page url by name."
+  [param]
+  (.get (js/URLSearchParams. (aget js/window "location" "search")) param))
+
+(defn query-params
+  "Get query parameters from the current page url by name as a vector."
+  [param]
+  (.getAll (js/URLSearchParams. (aget js/window "location" "search")) param))
+
 (defn init
   "Get the acronym to define, display it, and load the word lists"
   []
-  (let [acronym-param (.get (js/URLSearchParams. (aget js/window "location" "search")) "q")]
-    (print (str "acronym: " acronym-param))
-    (swap! acronym #(identity acronym-param))
-    (aset acronym-el "textContent" (s/upper-case acronym-param)))
-  (fetch "adjectives.txt" #(with-text % process-adjectives))
-  (fetch "nouns.txt" #(with-text % process-nouns)))
+  (let [preset-param (query-param "preset")
+        word-list-param (query-params "w")
+        acronym-param (query-param "a")]
+    (when (= "false" preset-param)
+      (swap! word-list-urls #{identity []}))
+    (when (not (empty? word-list-param))
+      (swap! word-list-urls
+             #(into [] (concat % word-list-param))))
+    (when acronym-param
+      (swap! acronym #(identity acronym-param))
+      (aset acronym-el "textContent" (s/upper-case acronym-param))
+      (doall (map fetch-word-list @word-list-urls)))))

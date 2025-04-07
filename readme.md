@@ -11,10 +11,16 @@ Inspired by [@ReluctusB's](https://github.com/ReluctusB)
 
 ## Usage
 
-The acronym to define is pulled from the `q` query parameter.
+The acronym to define is specified with the `a` query parameter.
 
 It will replace "That" in the heading text with the acronym being defined and
 show a meaning below that.
+
+To disable the preset word lists, use the query parameter `preset` with a value
+of `false`.
+
+To add word lists, use the query parameter `w` with the url as the value.
+This parameter can be used multiple times.
 
 ## Build
 
