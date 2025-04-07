@@ -24,6 +24,10 @@ This parameter can be used multiple times.
 
 The word lists must be plain text with one word per line.
 
+### Example
+
+https://csos95.github.io/define-acronym/?a=rb
+
 ## Build
 
 This project uses [shadow-cljs](https://github.com/thheller/shadow-cljs) to
