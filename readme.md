@@ -4,7 +4,7 @@ Find the[^1] meaning of that acronym you've always been curious about!
 
 [^1]: Almost certainly incorrect unless you get *very* lucky.
 
-# Build
+## Build
 
 This project uses [shadow-cljs](https://github.com/thheller/shadow-cljs) to
 compile [ClojureScript](https://clojurescript.org/) to javascript.
@@ -14,7 +14,7 @@ To compile, run `npx shadow-cljs release frontend`.
 
 The compiled output will be in `public/js`.
 
-# Run
+## Run
 
 Use some http server to serve the `public` directory.
 
