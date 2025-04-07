@@ -2,11 +2,19 @@
 
 Find the[^1] meaning of that acronym you've always been curious about!
 
-Inspired by [@ReluctusB's](https://github.com/ReluctusB) [WDRBSFA](https://reluctusb.github.io/WDRBSFA/) site.
+Inspired by [@ReluctusB's](https://github.com/ReluctusB)
+[WDRBSFA](https://reluctusb.github.io/WDRBSFA/) site.
 
 [^1]: Almost certainly incorrect unless you get *very* lucky.
 
 ![screenshot of the project defining "RB" to mean "Regular Bake"](assets/screenshot.png)
+
+## Usage
+
+The acronym to define is pulled from the `q` query parameter.
+
+It will replace "That" in the heading text with the acronym being defined and
+show a meaning below that.
 
 ## Build
 
@@ -22,4 +30,5 @@ The compiled output will be in `public/js`.
 
 Use some http server to serve the `public` directory.
 
-As an example, to serve with python's built in http server on port 8080, run `python -m http.server 8080`.
+As an example, to serve with python's built in http server on port 8080, run
+`python -m http.server 8080`.
